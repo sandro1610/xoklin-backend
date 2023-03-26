@@ -1,0 +1,6 @@
+node_modules/
+.env
+public/
+token.txt
+routes/TokenRoute.js
+controllers/Token.js

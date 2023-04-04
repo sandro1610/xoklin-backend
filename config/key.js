@@ -6,7 +6,7 @@ const key = {
     URL : process.env.URL,
     ACCESS_TOKEN_SECRET : process.env.ACCESS_TOKEN_SECRET,
     REFRESH_TOKEN_SECRET : process.env.REFRESH_TOKEN_SECRET,
-    
+    DB_URI : process.env.DB_URI,
     
     // Database
     HOST : process.env.HOST,

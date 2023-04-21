@@ -86,7 +86,7 @@ export const createUser = async (req, res) => {
         const phone = req.body.phone
         const password = req.body.password
         const confPassword = req.body.confPassword
-        const checkEmailExists = await Users.findOne({where: {email: email}})
+        const checkEmailExists = await Users.findOne({where: {[Op.or] : [{email: email}, {username: username}] }})
         // Validate Request
         if (checkEmailExists) return res.status(400).json({message: "Email has been used"})
         if (password !== confPassword) return res.status(400).json({ message: "Password and Confirm Password must be same" })

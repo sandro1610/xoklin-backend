@@ -88,12 +88,12 @@ export const createItem = async (req, res) => {
         const fileSize = file.data.length;
         const ext = path.extname(file.name);
         const fileName = file.md5 + Date.now() + ext;
-        const url = `/images/icon/${fileName}`;
+        const url = `/images/item/${fileName}`;
         // Validating request
         const allowedType = ['.png', '.jpg', '.jpeg'];
         if (!allowedType.includes(ext.toLowerCase())) return res.status(422).json({ message: "Invalid Images" });
         if (fileSize > 2000000) return res.status(422).json({ message: "Image must be less than 2 MB" });
-        const dir = "./public/images/icon/"
+        const dir = "./public/images/item/"
         if (!fs.existsSync(dir)) {
             fs.mkdirSync(dir, {recursive: true});
         }

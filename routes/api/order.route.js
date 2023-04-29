@@ -1,20 +1,14 @@
 import express from "express"
-import {
-    getOrders,
-    getOrderById,
-    createOrder,
-    updateOrder,
-    deleteOrder,
-    searchOrders
-} from "../../controllers/OrderController.js"
+import * as orderController from "../../controllers/OrderController.js"
+import {checkRole, ROLES} from "../../middleware/auth.js"
 
 const orderRouter = express.Router()
 
-orderRouter.get('/', getOrders)
-orderRouter.get('/:id', getOrderById) // Id Order
-orderRouter.get('/search/:keywords', searchOrders) // params Keywords
-orderRouter.post('/', createOrder)
-orderRouter.patch('/:id', updateOrder) // Id Order
-orderRouter.delete('/:id', deleteOrder) // Id Order
+orderRouter.get('/', orderController.getOrders)
+orderRouter.get('/:id', orderController.getOrderById) // Id Order
+orderRouter.get('/search/:keywords', orderController.searchOrders) // params Keywords
+orderRouter.post('/', orderController.createOrder)
+orderRouter.patch('/:id', orderController.changeStatusOrder) // Id Order
+orderRouter.delete('/:id', orderController.deleteOrder) // Id Order
 
 export default orderRouter

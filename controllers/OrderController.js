@@ -27,12 +27,13 @@ export const getOrders = async(req, res) =>{
 
 export const getOrderById = async(req, res) =>{
     try {
+        const idOrder = req.params.id
         const order = await Orders.findOne({
             where: {
-                orderId: req.params.id
+                idOrder: idOrder
             }
         })
-        if (Order === null) return res.status(404).json({message: "Order not found"})
+        if (order === null) return res.status(404).json({message: "Order not found"})
         res.status(200).json({data: order})
     } catch (error) {
         res.status(500).json({message: error.message})
@@ -81,10 +82,7 @@ export const createOrder = async (req, res) => {
         const longtitude = req.body.longtitude
         const latitude = req.body.latitude
         const order = req.body.order
-        const delivery_fee = req.body.delivery_fee
         const ammount = req.body.ammount
-        const payment_method_id = req.body.payment_method_id
-        const total_transfer = req.body.total_transfer
         const userId = req.body.userId
         // Execute request
         await Orders.create({ 
@@ -92,10 +90,7 @@ export const createOrder = async (req, res) => {
             longtitude : longtitude,
             latitude : latitude,
             order : order,
-            delivery_fee : delivery_fee,
             ammount : ammount,
-            total_transfer : total_transfer,
-            payment_method_id : payment_method_id,
             userId : userId,
         })
         // Response
@@ -105,37 +100,35 @@ export const createOrder = async (req, res) => {
     }
 }
 
-export const updateOrder = async (req, res) => {
+export const changeStatusOrder = async (req, res) => {
+    const idOrder = req.params.id
     const checkOrder = await Orders.findOne({
         where: {
-            OrderId: req.params.id
+            idOrder: idOrder
         }
     })
     if (!checkOrder) return res.status(404).json({ message: 'Order not found' })
-    const Order = req.body.Order
-    const price = req.body.price
-    const unit = req.body.unit
+    const status = req.body.status
     try {
         await Orders.update({ 
-            price: price,
-            Order : Order,
-            unit : unit,
+            status: status,
         }, {
             where: {
-                OrderId: req.params.id
+                idOrder: idOrder
             }
         })
-        res.status(200).json({ message: "Order Updated Successfuly" })
+        res.status(200).json({ message: "Order Status Changed" })
     } catch (error) {
         res.status(400).json({ message: error.message })
     }
 }
 
 export const deleteOrder = async (req, res) => {
+    const idOrder = req.params.id
     const Order = await Orders.findOne({
-        attributes: ['orderId'],
+        attributes: ['idOrder'],
         where: {
-            OrderId: req.params.id
+            idOrder: idOrder
         }
     })
     if (!Order) return res.status(404).json({ message: 'Order not found' })
@@ -143,7 +136,7 @@ export const deleteOrder = async (req, res) => {
     try {
         await Orders.destroy({
             where: {
-                OrderId: req.params.id
+                idOrder: idOrder
             }
         })
         res.status(200).json({ message: "Order Deleted Successfuly" })

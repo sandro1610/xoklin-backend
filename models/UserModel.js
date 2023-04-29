@@ -36,6 +36,12 @@ const Users = db.define('Users', {
         validate: {
             notEmpty: true
         }
+    }, phone: {
+        type: DataTypes.STRING,
+        allowNull: false,
+        validate: {
+            notEmpty: true
+        }
     }, password: {
         type: DataTypes.STRING,
         allowNull: false,

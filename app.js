@@ -6,7 +6,7 @@ import apiRouter from "./routes/route.js"
 import db from "./config/database.js"
 import FileUpload from "express-fileupload"
 
-db.sync({ force: true }).catch((error) => {console.log(error)})
+// db.sync({ alter: true }).catch((error) => {console.log(error)})
 
 const app = express()
 

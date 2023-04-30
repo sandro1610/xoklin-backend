@@ -1,31 +1,52 @@
 import Orders from "../models/OrderModel.js"
-import {Op} from "sequelize"
+import { Op } from "sequelize"
 import sequelize from "sequelize"
+import Users from "../models/UserModel.js"
 
-export const getOrders = async(req, res) =>{
-    const page = parseInt(req.query.page) || 1
-    const limit = parseInt(req.query.limit) || 10
-    const offset = limit * (page-1)
-    const totalRows = await Orders.count()
-    const totalPage = Math.ceil(totalRows / limit)
+export const getOrders = async (req, res) => {
     try {
+        const page = parseInt(req.query.page) || 1
+        const limit = parseInt(req.query.limit) || 10
+        const offset = limit * (page - 1)
+        const totalRows = await Orders.count()
+        const totalPage = Math.ceil(totalRows / limit)
+        const role = req.role
+        var condition
+        if(role != "ROLE_SUPERADMIN"){
+            if (req.query.status){
+                condition = {status : req.query.status}
+            } else{
+                condition = sequelize.where(sequelize.col('Orders.idOrder'), sequelize.col('Orders.idOrder'))
+            }
+        } else if (role == "ROLE_SUPERADMIN"){
+            if (req.query.status){
+                condition = {status : req.query.status, userId : req.userId}
+            } else{
+                condition = {userId : req.userId}
+            }
+        } else{
+            return res.status(403).json({message : "Access Denied"})
+        }
         const orders = await Orders.findAll({
-            attributes: {exclude: ['createdAt']},
+            attributes: { exclude: ['createdAt'] },
+            include : [{model: Users, attributes: {exclude: ["password", "username", "createdAt", "updatedAt", "role"]}}],
+            where : condition,
             offset: offset,
             limit: limit,
         })
-        res.status(200).json({ 
+        res.status(200).json({
             data: orders,
             page: page,
             limit: limit,
             totalRows: totalRows,
-            totalPage: totalPage })
+            totalPage: totalPage
+        })
     } catch (error) {
-        res.status(500).json({message: error.message})
+        res.status(500).json({ message: error.message })
     }
 }
 
-export const getOrderById = async(req, res) =>{
+export const getOrderById = async (req, res) => {
     try {
         const idOrder = req.params.id
         const order = await Orders.findOne({
@@ -33,14 +54,14 @@ export const getOrderById = async(req, res) =>{
                 idOrder: idOrder
             }
         })
-        if (order === null) return res.status(404).json({message: "Order not found"})
-        res.status(200).json({data: order})
+        if (order === null) return res.status(404).json({ message: "Order not found" })
+        res.status(200).json({ data: order })
     } catch (error) {
-        res.status(500).json({message: error.message})
+        res.status(500).json({ message: error.message })
     }
 }
 
-export const searchOrders = async(req, res) =>{
+export const searchOrders = async (req, res) => {
     const page = parseInt(req.query.page) || 1
     const limit = parseInt(req.query.limit) || 10
     const keywords = req.params.keywords
@@ -48,14 +69,15 @@ export const searchOrders = async(req, res) =>{
     const totalRows = await Orders.count({
         where: sequelize.where(sequelize.col('Order'), {
             [Op.iRegexp]: `${keywords}`
-        })}) 
+        })
+    })
     if (totalRows == 0) {
-       return res.status(404).json({massage: "Order not found"})
+        return res.status(404).json({ massage: "Order not found" })
     }
     const totalPage = Math.ceil(totalRows / limit)
     try {
         const response = await Orders.findAll({
-            attributes: {exclude: ['createdAt', 'password']},
+            attributes: { exclude: ['createdAt', 'password'] },
             order: [
                 ['updatedAt', 'DESC']
             ],
@@ -66,13 +88,14 @@ export const searchOrders = async(req, res) =>{
             })
         })
         res.status(200).json({
-            data:response,
+            data: response,
             page: page,
             limit: limit,
             totalRows: totalRows,
-            totalPage: totalPage})
+            totalPage: totalPage
+        })
     } catch (error) {
-        res.status(400).json({message: error.message})
+        res.status(400).json({ message: error.message })
     }
 }
 
@@ -85,13 +108,13 @@ export const createOrder = async (req, res) => {
         const ammount = req.body.ammount
         const userId = req.body.userId
         // Execute request
-        await Orders.create({ 
-            address : address,
-            longtitude : longtitude,
-            latitude : latitude,
-            order : order,
-            ammount : ammount,
-            userId : userId,
+        await Orders.create({
+            address: address,
+            longtitude: longtitude,
+            latitude: latitude,
+            order: order,
+            ammount: ammount,
+            userId: userId,
         })
         // Response
         res.status(200).json({ message: "Order created successfully" })
@@ -99,6 +122,7 @@ export const createOrder = async (req, res) => {
         res.status(400).json({ message: error.message })
     }
 }
+
 
 export const changeStatusOrder = async (req, res) => {
     const idOrder = req.params.id
@@ -110,7 +134,7 @@ export const changeStatusOrder = async (req, res) => {
     if (!checkOrder) return res.status(404).json({ message: 'Order not found' })
     const status = req.body.status
     try {
-        await Orders.update({ 
+        await Orders.update({
             status: status,
         }, {
             where: {

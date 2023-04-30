@@ -80,7 +80,7 @@ export const searchUsers = async(req, res) =>{
 export const createUser = async (req, res) => {
     try {
         const email = req.body.email
-        const role = "ROLE_USER"
+        const role = req.body.role
         const fullname = req.body.fullname
         const username = req.body.username
         const phone = req.body.phone

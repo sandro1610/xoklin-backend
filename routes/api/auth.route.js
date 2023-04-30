@@ -1,17 +1,13 @@
 import express from "express";
-import {
-    login,
-    forgetPassword,
-    newPassword,
-    me
-} from "../../controllers/AuthController.js";
+import * as authController from "../../controllers/AuthController.js";
 import { auth } from "../../middleware/auth.js";
 
 const authRouter = express.Router();
 
-authRouter.post('/login', login);
-authRouter.post('/forgetPassword', forgetPassword);
-authRouter.patch('/newPassword/:id/:token', newPassword);
-authRouter.get('/me', auth, me);
+authRouter.post('/login', authController.login);
+authRouter.post('/register', authController.register);
+authRouter.post('/forgetPassword', authController.forgetPassword);
+authRouter.patch('/newPassword/:id/:token', authController.newPassword);
+authRouter.get('/me', auth, authController.me);
 
 export default authRouter;

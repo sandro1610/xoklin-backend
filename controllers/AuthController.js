@@ -2,6 +2,7 @@ import Users from "../models/UserModel.js"
 import bcrypt from "bcrypt"
 import jwt from "jsonwebtoken"
 import key from "../config/key.js"
+import { Op } from "sequelize"
 
 export const register = async (req, res) => {
     try {

@@ -11,16 +11,25 @@ export const getOrders = async (req, res) => {
         const totalRows = await Orders.count()
         const totalPage = Math.ceil(totalRows / limit)
         const role = req.role
+        const status = req.query.status
         var condition
         if(role != "ROLE_SUPERADMIN"){
-            if (req.query.status){
-                condition = {status : req.query.status, userId : req.userId}
+            if (status == "canceled"){
+                condition = {status : 0, userId : req.userId}
+            } else if (status == "ongoing"){
+                condition = {status : [1,2,3,4,5], userId : req.userId}
+            } else if (status == "completed"){
+                condition = {status : 6, userId : req.userId}
             } else{
                 condition = {userId : req.userId}
             }
         } else if (role == "ROLE_SUPERADMIN" || role == "ROLE_ADMIN"){
-            if (req.query.status){
-                condition = {status : req.query.status}
+            if (status == "canceled"){
+                condition = {status : 0}
+            } else if (status == "ongoing"){
+                condition = {status : [1,2,3,4,5]}
+            } else if (status == "completed"){
+                condition = {status : 6}
             } else{
                 condition = sequelize.where(sequelize.col('Orders.idOrder'), sequelize.col('Orders.idOrder'))
             }

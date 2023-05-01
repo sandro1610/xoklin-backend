@@ -14,15 +14,15 @@ export const getOrders = async (req, res) => {
         var condition
         if(role != "ROLE_SUPERADMIN"){
             if (req.query.status){
-                condition = {status : req.query.status}
-            } else{
-                condition = sequelize.where(sequelize.col('Orders.idOrder'), sequelize.col('Orders.idOrder'))
-            }
-        } else if (role == "ROLE_SUPERADMIN"){
-            if (req.query.status){
                 condition = {status : req.query.status, userId : req.userId}
             } else{
                 condition = {userId : req.userId}
+            }
+        } else if (role == "ROLE_SUPERADMIN" || role == "ROLE_ADMIN"){
+            if (req.query.status){
+                condition = {status : req.query.status}
+            } else{
+                condition = sequelize.where(sequelize.col('Orders.idOrder'), sequelize.col('Orders.idOrder'))
             }
         } else{
             return res.status(403).json({message : "Access Denied"})

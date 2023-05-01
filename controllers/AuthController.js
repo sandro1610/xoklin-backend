@@ -21,7 +21,7 @@ export const register = async (req, res) => {
         const salt = await bcrypt.genSalt()
         const hashPassword = await bcrypt.hash(password, salt)
         // Execute request
-        await Users.create({ 
+        const user = await Users.create({ 
             fullname: fullname,
             email : email,
             role : role,
@@ -29,8 +29,10 @@ export const register = async (req, res) => {
             phone : phone,
             password : hashPassword
         })
+        const userId = user.idUser
+        const accessToken = jwt.sign({ userId, role, username }, key.ACCESS_TOKEN_SECRET,{"expiresIn": "30d"})
         // Response
-        res.status(200).json({ message: "User created successfully" })
+        res.status(200).json({ message: "User created successfully", token : accessToken })
     } catch (error) {
         res.status(400).json({ message: error.message })
     }
@@ -47,9 +49,8 @@ export const login = async (req, res) => {
         const isMatch = await bcrypt.compare(password, user.password)
         if (!isMatch) return res.status(403).json({ message: "Wrong Password" })
         const userId = user.idUser
-        const name = user.name
         const role = user.role
-        const accessToken = jwt.sign({ userId, name, role, username }, key.ACCESS_TOKEN_SECRET,{"expiresIn": "30d"})
+        const accessToken = jwt.sign({ userId, role, username }, key.ACCESS_TOKEN_SECRET,{"expiresIn": "30d"})
         res.status(200).json({ token : accessToken })
     }
     catch (error) {

@@ -8,7 +8,7 @@ export const getOrders = async (req, res) => {
         const role = req.role
         const status = req.query.status
         var condition
-        if(role != "ROLE_SUPERADMIN" || role != "ROLE_ADMIN"){
+        if(role == "ROLE_USER"){
             if (status == "cancel"){
                 condition = {status : 0, userId : req.userId}
             } else if (status == "ongoing"){

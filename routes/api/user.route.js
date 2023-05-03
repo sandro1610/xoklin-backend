@@ -7,7 +7,7 @@ const userRouter = express.Router()
 userRouter.get('/', checkRole(ROLES.SuperAdmin), userController.getUsers)
 userRouter.get('/:id', checkRole(ROLES.SuperAdmin), userController.getUserById) // Id User
 userRouter.get('/search/:keywords', checkRole(ROLES.SuperAdmin), userController.searchUsers) // params Keywords
-userRouter.post('/', userController.createUser)
+userRouter.post('/', checkRole(ROLES.SuperAdmin), userController.createUser)
 userRouter.patch('/change-password', userController.changePassword)
 userRouter.patch('/:id', userController.updateUser) // Id User
 userRouter.patch('/reset-password/:id', checkRole(ROLES.SuperAdmin), userController.resetPassword) // Id User

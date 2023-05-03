@@ -8,7 +8,7 @@ export const getOrders = async (req, res) => {
         const role = req.role
         const status = req.query.status
         var condition
-        if(role != "ROLE_SUPERADMIN"){
+        if(role != "ROLE_SUPERADMIN" || role != "ROLE_ADMIN"){
             if (status == "cancel"){
                 condition = {status : 0, userId : req.userId}
             } else if (status == "ongoing"){
@@ -41,6 +41,7 @@ export const getOrders = async (req, res) => {
             include : [{model: Users, attributes: {exclude: ["password", "username", "createdAt", "updatedAt", "role"]}}],
             where : condition,
             offset: offset,
+            order: [["createdAt", 'desc']],
             limit: limit,
         })
         res.status(200).json({

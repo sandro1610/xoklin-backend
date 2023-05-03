@@ -4,6 +4,7 @@ import {auth, checkRole, ROLES} from "../../middleware/auth.js"
 
 const reportRouter = express.Router()
 
-reportRouter.get('/', reportController.getOrders)
+reportRouter.post('/order-period', auth, checkRole(ROLES.SuperAdmin), reportController.orderPerPeriod)
+reportRouter.post('/total-ammount', auth, checkRole(ROLES.SuperAdmin), reportController.totalAmount)
 
 export default reportRouter

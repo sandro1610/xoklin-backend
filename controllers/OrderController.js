@@ -5,16 +5,11 @@ import Users from "../models/UserModel.js"
 
 export const getOrders = async (req, res) => {
     try {
-        const page = parseInt(req.query.page) || 1
-        const limit = parseInt(req.query.limit) || 10
-        const offset = limit * (page - 1)
-        const totalRows = await Orders.count()
-        const totalPage = Math.ceil(totalRows / limit)
         const role = req.role
         const status = req.query.status
         var condition
         if(role != "ROLE_SUPERADMIN"){
-            if (status == "canceled"){
+            if (status == "cancel"){
                 condition = {status : 0, userId : req.userId}
             } else if (status == "ongoing"){
                 condition = {status : [1,2,3,4,5], userId : req.userId}
@@ -24,7 +19,7 @@ export const getOrders = async (req, res) => {
                 condition = {userId : req.userId}
             }
         } else if (role == "ROLE_SUPERADMIN" || role == "ROLE_ADMIN"){
-            if (status == "canceled"){
+            if (status == "cancel"){
                 condition = {status : 0}
             } else if (status == "ongoing"){
                 condition = {status : [1,2,3,4,5]}
@@ -36,6 +31,11 @@ export const getOrders = async (req, res) => {
         } else{
             return res.status(403).json({message : "Access Denied"})
         }
+        const page = parseInt(req.query.page) || 1
+        const limit = parseInt(req.query.limit) || 10
+        const offset = limit * (page - 1)
+        const totalRows = await Orders.count({where: condition})
+        const totalPage = Math.ceil(totalRows / limit)
         const orders = await Orders.findAll({
             attributes: { exclude: ['createdAt'] },
             include : [{model: Users, attributes: {exclude: ["password", "username", "createdAt", "updatedAt", "role"]}}],

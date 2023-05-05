@@ -18,16 +18,6 @@ export const getOrders = async (req, res) => {
             } else{
                 condition = {userId : req.userId}
             }
-        } else if (role == "ROLE_SUPERADMIN"){
-            if (status == "cancel"){
-                condition = {status : 0}
-            } else if (status == "ongoing"){
-                condition = {status : [1,2,3,4,5]}
-            } else if (status == "completed"){
-                condition = {status : 6}
-            } else{
-                condition = sequelize.where(sequelize.col('Orders.idOrder'), sequelize.col('Orders.idOrder'))
-            }
         } else if (role == "ROLE_ADMIN"){
             if (status == "cancel"){
                 condition = {status : 0}

@@ -19,8 +19,7 @@ export const auth = async (req, res, next) => {
     
 export const ROLES = {
     User: "ROLE_USER",
-    Admin: "ROLE_ADMIN",
-    SuperAdmin: "ROLE_SUPERADMIN",
+    SuperAdmin: "ROLE_ADMIN",
 }
 export const checkRole = (...roles) => (req, res, next) => {
     if (!req.role) {

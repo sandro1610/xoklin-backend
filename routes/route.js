@@ -9,7 +9,7 @@ import {auth} from "../middleware/auth.js"
 const apiRouter = express.Router()
 
 apiRouter.use("/users", auth, userRouter)
-apiRouter.use("/items", itemRouter)
+apiRouter.use("/items", auth, itemRouter)
 apiRouter.use("/report", reportRouter)
 apiRouter.use("/auth", authRouter)
 apiRouter.use("/orders", auth, orderRouter)

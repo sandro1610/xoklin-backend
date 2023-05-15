@@ -3,19 +3,28 @@ import {Op} from "sequelize"
 import sequelize from "sequelize"
 import path from "path"
 import fs from "fs"
-import DeviceDetector from "node-device-detector";
 
 export const getItems = async(req, res) =>{
-
-const detector = new DeviceDetector({
-  clientIndexes: true,
-  deviceIndexes: true,
-  deviceAliasCode: false,
-});
-const userAgent = 'Mozilla/5.0 (Linux; Android 5.0; NX505J Build/KVT49L) AppleWebKit/537.36 (KHTML, like Gecko) Chrome/43.0.2357.78 Mobile Safari/537.36';
-const result = detector.detect(userAgent);
-
-res.status(200).json({data: result})
+    const page = parseInt(req.query.page) || 1
+    const limit = parseInt(req.query.limit) || 10
+    const offset = limit * (page-1)
+    const totalRows = await Items.count()
+    const totalPage = Math.ceil(totalRows / limit)
+    try {
+        const items = await Items.findAll({
+            attributes: {exclude: ['createdAt', 'updatedAt']},
+            offset: offset,
+            limit: limit,
+        })
+        res.status(200).json({ 
+            data: items,
+            page: page,
+            limit: limit,
+            totalRows: totalRows,
+            totalPage: totalPage })
+    } catch (error) {
+        res.status(500).json({message: error.message})
+    }
 }
 
 export const getItemById = async(req, res) =>{

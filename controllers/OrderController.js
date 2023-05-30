@@ -12,9 +12,9 @@ export const getOrders = async (req, res) => {
             if (status == "cancel"){
                 condition = {status : 0, userId : req.userId}
             } else if (status == "ongoing"){
-                condition = {status : [1,2,3,4,5], userId : req.userId}
+                condition = {status : [1,2,3,4,5,6,7,8], userId : req.userId}
             } else if (status == "completed"){
-                condition = {status : 6, userId : req.userId}
+                condition = {status : 9, userId : req.userId}
             } else{
                 condition = {userId : req.userId}
             }
@@ -22,9 +22,9 @@ export const getOrders = async (req, res) => {
             if (status == "cancel"){
                 condition = {status : 0}
             } else if (status == "ongoing"){
-                condition = {status : [1,2,3,4,5]}
+                condition = {status : [1,2,3,4,5,6,7,8]}
             } else if (status == "completed"){
-                condition = {status : 6}
+                condition = {status : 9}
             } else{
                 condition = sequelize.where(sequelize.col('Orders.idOrder'), sequelize.col('Orders.idOrder'))
             }
@@ -132,7 +132,6 @@ export const createOrder = async (req, res) => {
         res.status(400).json({ message: error.message })
     }
 }
-
 
 export const changeStatusOrder = async (req, res) => {
     const idOrder = req.params.id
